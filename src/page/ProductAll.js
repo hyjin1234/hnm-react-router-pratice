@@ -5,7 +5,7 @@ import { Col, Container,Row} from 'react-bootstrap';
 const ProductAll = () => {
     const [productList,setProductList]= useState([]);
     const getProducts=async()=>{
-        let url=`http://my-json-server.typicode.com/hyjin1234/hnm-react-router-pratice/products`;
+        let url=`https://my-json-server.typicode.com/hyjin1234/hnm-react-router-pratice/products`;
         let response = await fetch(url);
         let data = await response.json();
         setProductList(data);
