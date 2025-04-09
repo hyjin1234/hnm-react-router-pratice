@@ -1,9 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ProductCard = ({item}) => {
+  const navigate = useNavigate();
+  const showDetail=()=>{
+    navigate(`/product/${item.id}`);
+  }
   return (
-    <div>
-        <img className="img-style"src={item?.img} width={300}/>
+    <div className="img-style" onClick={showDetail}>
+        <img src={item?.img} width={300}/>
         <div>
             {item?.choice == true?"Consciout choice":""}
         </div>
@@ -11,7 +16,7 @@ const ProductCard = ({item}) => {
         {item?.title}
         </div>
         <div>
-        {item?.proice}
+        ₩{item?.price}
         </div>
         <div>
             {item?.new == true?"신제품":""}
