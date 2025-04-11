@@ -1,37 +1,53 @@
-import React, { useEffect, useState } from 'react'
-import ProductCard from '../component/ProductCard';
-import { Col, Container,Row} from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import ProductCard from "../component/ProductCard";
+import { Row, Col, Container, Alert } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 
 const ProductAll = () => {
-    const [productList,setProductList]= useState([]);
-    const[query,setQuery] =useSearchParams();
-    const getProducts=async()=>{
-        let searchQuery = query.get("q") || "";
-        console.log("쿼리?",searchQuery)
-        let url=`https://my-json-server.typicode.com/hyjin1234/hnm-react-router-pratice/products?q=${searchQuery}`;
-        let response = await fetch(url);
-        let data = await response.json();
-        setProductList(data);
-    }
-    useEffect(()=>{
-        getProducts();
-    },[query])
-  return (
-    <div>
-        <Container>
-            <Row>
-                {productList.map((menu)=>(
-                    <Col lg={3}>
-                        <ProductCard item={menu}/>
-                    </Col>
-                )) }
-                
-            </Row>
-        </Container>
-    
-    </div>
-  )
-}
+  let [products, setProducts] = useState([]);
+  const [query, setQuery] = useSearchParams();
+  let [error, setError] = useState("");
 
-export default ProductAll
+  const getProducts = async () => {
+    try {
+      let keyword = query.get("q") || "";
+      let url = `https://my-json-server.typicode.com/hyjin1234/hnm-react-router-pratice/products?q=${keyword}`;
+      let response = await fetch(url);
+      let data = await response.json();
+      if (data.length < 1) {
+        if (keyword !== "") {
+          setError(`${keyword}와 일치하는 상품이 없습니다`);
+        } else {
+          throw new Error("결과가 없습니다");
+        }
+      }
+      setProducts(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, [query]);
+  return (
+    <Container>
+      {error ? (
+        <Alert variant="danger" className="text-center">
+          {error}
+        </Alert>
+      ) : (
+        <Row>
+          {products.length > 0 &&
+            products.map((item) => (
+              <Col md={3} sm={12} key={item.id}>
+                <ProductCard item={item} />
+              </Col>
+            ))}
+        </Row>
+      )}
+    </Container>
+  );
+};
+
+export default ProductAll;
